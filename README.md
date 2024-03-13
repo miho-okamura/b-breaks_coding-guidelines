@@ -1,11 +1,6 @@
-# Viteを用いたコーディング用テンプレート
+# コーディングルール
 
-作成日：2024.01.15 　　更新日：2024.01.15
-
-## BEAUTY-CHAOO開発の上での注意
-> [!CAUTION]
-> 三号機で静的ソースを確認するうえで、リンクを設置する際にパスが**絶対パス**だとうまくいかないため、**相対パス**で設定してください。
-
+作成日：2024.03.13 　　更新日：2024.03.13
 
 ## 開発環境
 
@@ -13,82 +8,6 @@
 
 ■Vite ■Sass（SCSS） ■Handlebars
 
-
-## ディレクトリ構造
-
-```
-root
- ├─ dist  //←←←←←←←←←←# dist先  基本に触らない
- │   ├─assets
- │   │   ├─css
- │   │   ├─images
- │   │   └─js
- │   ~~~~~~~~~~~~~~~~~~
- │   └─index.html
- │
- ├─ src
- │   ├─components　//←←←←←# コンポーネントを管理するディレクトリ（handlebars）
- │   │   ├─header.html
- │   │   └─footer.html
- │   ├─scss
- │   │   ├─Foundation
- │   │   │   └─mixin
- │   │   ├─Layout
- │   │   ├─object
- │   │   │   ├─component
- │   │   │   ├─project
- │   │   │   └─Utility
- │   │   └─style.scss
- │   ├─public //←←←←←←←←←# build時無変換で出力される
- │   │   ├─css
- │   │   ├─images //←←←←←←# build時ディレクトリを維持できる
- │   │   └─js
- │   ├─js
- │   │   └─main.js
- │   └─index.html
- │
- ├─ .gitignore
- ├─ package.json //←←←←←←←←←# （プロジェクトのjsonファイル）
- ├─ postcss.config.cjs //←←←←←# （PostCSSの設定ファイル）
- └─ vite.config.js //←←←←←←←# （viteの設定ファイル）
-```
-
-
-## Vite関連
-
-### Viteを用いて行っていること
-- 複数のHTMLページ生成
-- Handlebarsによる共通パーツの管理（ハンドルバー化）
-- SCSSの書き出し
-- PostCSSによるCSS最適化
-- jsの結合
-
-
-### Viteの使用方法
-1. コントロールパネルなどからこのテンプレートを開き、「npm i」でパッケージをインストールしてください。
-2. 「npm vite dev」で開発環境が起動します。
-3. 「npm vite build」で「dist」ディレクトリに本番用の静的アセットが生成されます。
-
-
-#### ■ HTMLを複数出力したい場合
-Viteの初期設定では「npm run build」するとHTMLファイルは1つにまとめられてしまうため、HTMLを複数出力したい時には、vite.config.jsに出力するページを追記していく必要がある。
-
-複数出力の詳細⇒[公式リファレンスのマルチページアプリ](https://ja.vitejs.dev/guide/build.html#multi-page-app)
-
-```
-export default defineConfig({
-  build: {
-    rollupOptions: {
-      input: { 
-        main: resolve(root, 'index.html'),
-        nested: resolve(root, 'nested', 'index.html'),
-        //以下のように追記していく※重複はしないように
-        [任意の名前]: resolve(root, '[ディレクトリ名]', '[ファイル名].html'),
-      },
-    },
-  },
-})
-```
 
 ## HTML
 
@@ -120,6 +39,19 @@ export default defineConfig({
   - **Component** ・・・ 再利用できるパターンとして、小さな単位のモジュールを定義
   - **Project** ・・・ プロジェクト固有のパターンであり、いくつかのComponentと、それに該当しない要素によって構成されるもの
   - **Utility** ・・・ わずかなスタイルの調整のための便利クラスなどを定義
+
+```
+scss
+ ├─Foundation
+ │   ├─mixin
+ │   └─variable
+ ├─Layout
+ ├─object
+ │   ├─component
+ │   ├─project
+ │   └─Utility
+ └─style.scss
+```
 
 
 #### FLOCSSの基本的なclassの書き方※命名規則について
@@ -163,6 +95,23 @@ IDはjQueryやjavascriptなどの動的パーツに用いる。
   </div>
 </nav>
 ```
+
+#### スタイル（css）は全てclassに対して指定する（要素に対して直にスタイルを指定しない）
+要素を用いることによって、詳細度が上がってしまい他のスタイルを上書きしてしまう。<br>
+BEMでは詳細度を均一に保つというルールがあるため、極力要素は書かないこと。
+
+
+#### Blockには「margin」「position:absolute」などのレイアウトに関わるスタイルを指定しない ※MIXについて
+
+Blockは使い回しが可能なパーツとして考えるため、レイアウトに関わるBlockに指定しないこと。
+
+例えばボタンだと、見た目は使い回したいが位置や余白の距離が違う等の場合がある。<br>
+この場合、ボタンに2つのクラスを指定する。見た目のスタイルをBlock、位置や余白のスタイルをElementに指定する。<br>
+これはBEMでは**Mix**と言う。
+
+> [!TIP]
+> **Mix**とはBlock自体が持つべきではないレイアウトなどに関する指定をElementを利用して指定する、BEMにとって最も重要なテクニック。<br>
+>特に意識してコーディングをお願いします。
 ```
 .p-gNav{
   width: 100%;
@@ -177,21 +126,9 @@ IDはjQueryやjavascriptなどの動的パーツに用いる。
 }
 ```
 
-#### スタイル（css）は全てclassに対して指定する（要素に対して直にスタイルを指定しない）
-要素を用いることによって、詳細度が上がってしまい他のスタイルを上書きしてしまう。<br>
-BEMでは詳細度を均一に保つというルールがあるため、極力要素は書かないこと。
+### 
 
-#### Blockには「margin」「position:absolute」などのレイアウトに関わるスタイルを指定しない ※MIXについて
 
-Blockは使い回しが可能なパーツとして考えるため、レイアウトに関わるBlockに指定しないこと。
-
-例えばボタンだと、見た目は使い回したいが位置や余白の距離が違う等の場合がある。<br>
-この場合、ボタンに2つのクラスを指定する。見た目のスタイルをBlock、位置や余白のスタイルをElementに指定する。<br>
-これはBEMでは**Mix**と言う。
-
-> [!TIP]
-> **Mix**とはBlock自体が持つべきではないレイアウトなどに関する指定をElementを利用して指定する、BEMにとって最も重要なテクニック。<br>
->特に意識してコーディングをお願いします。
 ```
 // 例
 
@@ -201,7 +138,7 @@ Blockは使い回しが可能なパーツとして考えるため、レイアウ
       <p>テストテキスト</p>
     </div>
     <div class="c-card p-section__btn"><!-- ☆Block + ★Element の Mix -->
-      <h2 class="c-btn__ttl"><!-- ★Element -->
+      <h2 class="c-card__ttl"><!-- ★Element -->
         
       </h2>
     </div>
@@ -287,17 +224,68 @@ Blockは使い回しが可能なパーツとして考えるため、レイアウ
 
 
 
+
+## Vite関連
+
+### Viteを用いて行っていること
+- 複数のHTMLページ生成
+- Handlebarsによる共通パーツの管理（ハンドルバー化）
+- SCSSの書き出し
+- PostCSSによるCSS最適化
+- jsの結合
+
+
+### Viteの使用方法
+1. コントロールパネルなどからこのテンプレートを開き、「npm i」でパッケージをインストールしてください。
+2. 「npm vite dev」で開発環境が起動します。
+3. 「npm vite build」で「dist」ディレクトリに本番用の静的アセットが生成されます。
+
+
+#### ■ HTMLを複数出力したい場合
+Viteの初期設定では「npm run build」するとHTMLファイルは1つにまとめられてしまうため、HTMLを複数出力したい時には、vite.config.jsに出力するページを追記していく必要がある。
+
+複数出力の詳細⇒[公式リファレンスのマルチページアプリ](https://ja.vitejs.dev/guide/build.html#multi-page-app)
+
+```
+export default defineConfig({
+  build: {
+    rollupOptions: {
+      input: { 
+        main: resolve(root, 'index.html'),
+        nested: resolve(root, 'nested', 'index.html'),
+        //以下のように追記していく※重複はしないように
+        [任意の名前]: resolve(root, '[ディレクトリ名]', '[ファイル名].html'),
+      },
+    },
+  },
+})
+```
+
+
+
+
 ## 参考サイト
 
 ### CSSガイドライン
 
 https://github.com/manabuyasuda/styleguide/blob/master/css-styleguide.md
 
+https://brachio.co.jp/blog/w6s7zd13hha7
+
 ### FLOCSS
 
 https://github.com/hiloki/flocss
 
+https://tane-be.co.jp/knowledge/web-design/2270/
 
 ### BEM
 
 https://fukulog.net/bem/
+
+https://bagelee.com/design/about_flocss_and_bem/
+
+https://tonoblog.yutaka01.net/2023/11/15/css_bem_element/
+
+### クラス名参考
+
+https://github.com/manabuyasuda/coding-guidelines/blob/master/css/css-naming-list.md

@@ -8,16 +8,13 @@
 
 ■Vite ■Sass（SCSS） ■Handlebars
 
-
 ## HTML
-
 
 ## Sass(Dart-Sass)
 
-2022年ごろのSass（LibSass）で使用されていた@importが廃止されるにあたり、Dart-Sass用にSassを書き換えました。
+2022 年ごろの Sass（LibSass）で使用されていた@import が廃止されるにあたり、Dart-Sass 用に Sass を書き換えました。
 
-こちらでは@importではなく、@use、@forwardを用いてコンパイル等を行います。
-
+こちらでは@import ではなく、@use、@forward を用いてコンパイル等を行います。
 
 ## CSS 設計
 
@@ -25,19 +22,17 @@
 
 命名は [BEM](https://en.bem.info/methodology/quick-start) を利用。
 
-
-
-### ◆ FLOCSSについて※重要箇所のピックアップ
+### ◆ FLOCSS について※重要箇所のピックアップ
 
 以下を見る前に一度[FLOCSS](https://github.com/hiloki/flocss)に目を通してください。
 
+#### FLOCSS のレイヤー構成について
 
-#### FLOCSSのレイヤー構成について
-- **Foundation** ・・・ Reset.cssやNormalize.cssなどを用いたブラウザのデフォルトスタイルの初期化や、プロジェクトにおける基本的なスタイルを定義
+- **Foundation** ・・・ Reset.css や Normalize.css などを用いたブラウザのデフォルトスタイルの初期化や、プロジェクトにおける基本的なスタイルを定義
 - **Layout** ・・・ ページを構成するヘッダーやメインのコンテンツエリア、サイドバーやフッターといったプロジェクト共通のコンテナーブロックのスタイルを定義
-- **Object** ・・・ プロジェクトにおける繰り返されるビジュアルパターンをすべてObjectと定義。次の3つのレイヤーに分ける。
+- **Object** ・・・ プロジェクトにおける繰り返されるビジュアルパターンをすべて Object と定義。次の 3 つのレイヤーに分ける。
   - **Component** ・・・ 再利用できるパターンとして、小さな単位のモジュールを定義
-  - **Project** ・・・ プロジェクト固有のパターンであり、いくつかのComponentと、それに該当しない要素によって構成されるもの
+  - **Project** ・・・ プロジェクト固有のパターンであり、いくつかの Component と、それに該当しない要素によって構成されるもの
   - **Utility** ・・・ わずかなスタイルの調整のための便利クラスなどを定義
 
 ```
@@ -53,105 +48,95 @@ scss
  └─style.scss
 ```
 
+#### FLOCSS の基本的な class の書き方※命名規則について
 
-#### FLOCSSの基本的なclassの書き方※命名規則について
+「Layout」の class には **.l-**<br>
+「Component」の class には **.c-**<br>
+「Project」には **.p-**<br>
+「Utility」には **.u-** <br>
+というように、フォルダの頭文字を class に記述する。
 
-「Layout」のclassには __.l-__<br>
-「Component」のclassには __.c-__<br>
-「Project」には __.p-__<br>
-「Utility」には __.u-__ <br>
-というように、フォルダの頭文字をclassに記述する。
-
->  [!WARNING]
-> 「Object」レイヤーはComponent、Project、Utilityの親レイヤーのため、 ".o-"から始まるクラスはFLOCSSのルール違反になります。<br>
+> [!WARNING]
+> 「Object」レイヤーは Component、Project、Utility の親レイヤーのため、 ".o-"から始まるクラスは FLOCSS のルール違反になります。<br>
 > 必ず".p-"か".c-"、".u-"のいずれかにしてください。
 
-
 > [!IMPORTANT]
->また、基本的に「Object」ディレクトリ直下にファイルは作らないようにしてください。ここのディレクトリ直下にあるファイルはコンパイル用のstyle.scssのみにしてください。<br>
+> また、基本的に「Object」ディレクトリ直下にファイルは作らないようにしてください。ここのディレクトリ直下にあるファイルはコンパイル用の style.scss のみにしてください。<br>
 > 例外は".p-"などのファイル数が少なく、混在させても管理が容易（ディレクトリでの整理が不要）の場合のみです。
 
 
-### BEMについて
+
+#### Layoutには位置など、レイアウトの指定のみ定義し、子要素を作らない
+
+```
+// positionやmarginなど
+.l-header{
+  position: relative;
+  &.is-fixed{
+    position: fixed;
+    left: 0;
+    top: 0;
+  }
+}
+
+// 背景色などのスタイルはObject側のパーツやブロックで指定する。
+.p-header{
+  background-color: #f6f6f6;
+  &__inner{
+    max-width: 1200px;
+    margin: auto;
+  }
+}
+```
+
+### BEM について
 
 以下を見る前に一度[BEM](https://en.bem.info/methodology/quick-start) / [BEM (日本語翻訳版)](https://github.com/juno/bem-methodology-ja/blob/master/definitions.md)に目を通してください。
 
-#### BEMの概念
-BEMはブロック（Block）、エレメント（Element）、モディファイア（Modifier）の頭文字をとったものです。<br>
-Blockはあるパーツ（コンポーネント）の親要素です。BlockはElementと呼ばれる子孫要素を持つことができます。<br>
-Modifierはバリエーションや状態を変化させるときに指定するもので、BlockかElementと同階層に指定します。
-- .Block
-- .Block__Element
-- .Block-Modifier
-- .Block__Element-Modifier
+#### BEM の概念
 
-#### IDは使わない
-CSSでスタイルを適用する際にIDを使用しない。<br>
-IDはjQueryやjavascriptなどの動的パーツに用いる。
+BEM は **ブロック（Block）**、**エレメント（Element）**、**モディファイア（Modifier）** の頭文字をとったものです。<br>
+Block はあるパーツ（コンポーネント）の親要素です。Block は Element と呼ばれる子孫要素を持つことができます。<br>
+Modifier はバリエーションや状態を変化させるときに指定するもので、Block か Element と同階層に指定します。
+
+- .**Block**
+- .Block\_\_**Element**
+- .Block-**Modifier**
+- .Block\_\_Element-Modifier
+
+#### ID は使わない
+
+CSS でスタイルを適用する際に ID を使用しない。<br>
+ID は jQuery や javascript などの動的パーツに用いる。
+
 ```
-<nav class="p-gNav l-gNav" id="js-nav">
-  <div class="p-gNav__cont">
+<nav class="p-menu l-menu" id="js-menu">
+  <div class="p-menu__cont">
     <!-- メニュー -->
   </div>
 </nav>
 ```
 
-#### スタイル（css）は全てclassに対して指定する（要素に対して直にスタイルを指定しない）
+#### スタイル（css）は全て class に対して指定する（要素に対して直にスタイルを指定しない）
+
 要素を用いることによって、詳細度が上がってしまい他のスタイルを上書きしてしまう。<br>
-BEMでは詳細度を均一に保つというルールがあるため、極力要素は書かないこと。
+BEM では詳細度を均一に保つというルールがあるため、極力要素は書かないこと。
 
+#### MIX について
 
-#### Blockには「margin」「position:absolute」などのレイアウトに関わるスタイルを指定しない ※MIXについて
-
-Blockは使い回しが可能なパーツとして考えるため、レイアウトに関わるBlockに指定しないこと。
+Block は使い回しが可能なパーツとして考えるため、レイアウトに関わる Block に指定しないこと。
 
 例えばボタンだと、見た目は使い回したいが位置や余白の距離が違う等の場合がある。<br>
-この場合、ボタンに2つのクラスを指定する。見た目のスタイルをBlock、位置や余白のスタイルをElementに指定する。<br>
-これはBEMでは**Mix**と言う。
+この場合、ボタンに 2 つのクラスを指定する。見た目のスタイルを Block、位置や余白のスタイルを Element に指定する。<br>
+これは BEM では**Mix**と言う。
 
-> [!TIP]
-> **Mix**とはBlock自体が持つべきではないレイアウトなどに関する指定をElementを利用して指定する、BEMにとって最も重要なテクニック。<br>
->特に意識してコーディングをお願いします。
-```
-.p-gNav{
-  width: 100%;
-  height: 100%;
-  background-color: #f6f6f6;
-}
-
-.l-gNav{
-  position: fixed;
-  left: 0;
-  top: 0;
-}
-```
-
-### 
-
-
-```
-// 例
-
-<section class="p-section"><!-- ☆Block -->
-  <div class="p-section__wrap"><!-- ★Element -->
-    <div class="p-section__txt"><!-- ★Element -->
-      <p>テストテキスト</p>
-    </div>
-    <div class="c-card p-section__btn"><!-- ☆Block + ★Element の Mix -->
-      <h2 class="c-card__ttl"><!-- ★Element -->
-        
-      </h2>
-    </div>
-  </div>
-</section>
-```
-
-上の例だと、.c-btnが**Block**、.p-section__btnが**Elements**になる。<br>
-この場合、 **Elements**である.p-section__btn側で位置や余白の調整の記述を追加する。<br>
-こうすることにより、**Block**の再利用性を高くする。
+> [!TIP] > **Mix**とは Block 自体が持つべきではないレイアウトなどに関する指定を Element を利用して指定する、BEM にとって最も重要なテクニック。<br>
+> 特に意識してコーディングをお願いします。
 
 #### Modifier（バリエーション）
-**Modifier**はBlockとElementのバリエーションや状態の変化をつくるときに指定します。
+
+**Modifier**は Block と Element のバリエーションや状態の変化をつくるときに指定します。
+
 ```
 // 例
 
@@ -162,111 +147,127 @@ Blockは使い回しが可能なパーツとして考えるため、レイアウ
 </div>
 ```
 
-### ★ ハウスルール
+## ★ ハウスルール
 
-ここでは上記のFLOCSS、BEMにはないルールを記述している。
+ここでは上記の FLOCSS、BEM にはないルールを記述している。
 
-上記ルールの場合class名が長くなってしまうため、追加したルール。
+上記ルールの場合 class 名が長くなってしまうため、追加したルール。
 
+### Block の命名で単語と単語を繋げたい場合、ケバブケースではなくキャメルケース（ローワーキャメルケース）で表記する。
 
-
-#### Blockの命名で単語と単語を繋げたい場合、ケバブケースではなくキャメルケース（ローワーキャメルケース）で表記する。
-
-
-##### ◆ ケバブケース
 ```
-/* △  BlockかElementか分かりにくい */
+/* ◆ ケバブケース */
 
 .p-hero-slider {}
 
-.p-hero-catch-txt {}
-```
-##### ◆ キャメルケース（ローワーキャメルケース）
-```
-/* 〇　一目でBlockと分かる */
+.p-hero-catch {}
+
+
+/* ◆ キャメルケース（ローワーキャメルケース） */
 
 .p-heroSlider {}
 
 .p-heroCatch {}
 ```
 
-
-#### アンダースコアは２つ（\_\_）、ハイフンは１つ（-）。
-
-```
-/*  */
-.p-header__container {}
-
-/*  */
-.p-header-logo {}
-```
-
-
-#### 極力、3 つ以上単語をつなげるのは控える。
+### アンダースコアは２つ（\_\_）、ハイフンは１つ（-）。
 
 ```
-/* △　アンスコ2つが続いているので冗長かつ読みにくい。 */
+// 例
 
-.p-header__nav__list-item {}
+<a href="#" class="c-btn c-btn-red c-btn-kadomaru">
+  <svg class="c-btn__ico c-bnt__ico-wh">
+    <!-- アイコン -->
+  </svg>
+  ボタン
+</a>
+```
+
+### エレメントの後にエレメントを繋ぐ書き方はNG
+
+```
+// ×　アンダースコアが2つ以上続いている
+
+<nav class="p-header__nav">
+  <ul class="p-header__nav__list">
+    <li class="p-header__nav__list__item">
+      <!--menu-->
+    </li>
+  </ul>
+</nav>
 
 
-/* 〇　新しいBlockをつくる。 */
+// 〇　新しいBlockをつくりElementで続ける。
 
-.p-headerNav__list-item {}
+<nav class="p-headerNav">
+  <ul class="p-headerNav__list">
+    <li class="p-headerNav__listItem">
+      <!--menu-->
+    </li>
+  </ul>
+</nav>
 
 
-/* ◎　わかりやすければ単語を略しても良い。 */
+// 〇　Blockの中でBlockを用意する
 
-.p-hNav__list-item {}
+<nav class="p-headerNav">
+  <ul class="p-headerNav__list p-hNavList">
+    <li class="p-hNavList__item">
+      <!--menu-->
+    </li>
+  </ul>
+</nav>
+```
+
+## FLOCSS(+BEM)のコーディング例
+
+#### 例 1 : 複数のクラス名をつけて管理する
+
+```
+<header class=l-header" id="js-nav">
+  <div class="p-header">
+    <h1 class="p-header__logo p-logo">
+      <a href="/" class="p-logo__link">
+        <!--LOGO-->
+      </a>
+    </h1>
+    <nav class="p-header__nav p-gNav">
+      <!--MENU-->
+    </nav>
+    <div class="p-header__contact">
+      <a href="" class="p-contactBtn p-contactBtn-orange">
+        <!-- CONTACT -->
+      </a>
+    </div>
+  </div>
+</header>
 ```
 
 
-
-
-
-
-## Vite関連
-
-### Viteを用いて行っていること
-- 複数のHTMLページ生成
-- Handlebarsによる共通パーツの管理（ハンドルバー化）
-- SCSSの書き出し
-- PostCSSによるCSS最適化
-- jsの結合
-
-
-### Viteの使用方法
-1. コントロールパネルなどからこのテンプレートを開き、「npm i」でパッケージをインストールしてください。
-2. 「npm vite dev」で開発環境が起動します。
-3. 「npm vite build」で「dist」ディレクトリに本番用の静的アセットが生成されます。
-
-
-#### ■ HTMLを複数出力したい場合
-Viteの初期設定では「npm run build」するとHTMLファイルは1つにまとめられてしまうため、HTMLを複数出力したい時には、vite.config.jsに出力するページを追記していく必要がある。
-
-複数出力の詳細⇒[公式リファレンスのマルチページアプリ](https://ja.vitejs.dev/guide/build.html#multi-page-app)
+#### 例 2 : Block には「margin」「position:absolute」などのレイアウトに関わるスタイルを指定しない
 
 ```
-export default defineConfig({
-  build: {
-    rollupOptions: {
-      input: { 
-        main: resolve(root, 'index.html'),
-        nested: resolve(root, 'nested', 'index.html'),
-        //以下のように追記していく※重複はしないように
-        [任意の名前]: resolve(root, '[ディレクトリ名]', '[ファイル名].html'),
-      },
-    },
-  },
-})
+.p-header{
+  width: 100%;
+  height: 100%;
+  background-color: #f6f6f6;
+}
+
+.l-header{
+  position: fixed;
+  left: 0;
+  top: 0;
+}
 ```
 
-
+上の例だと、.c-card が**Block**、.p-section__btn が**Elements**になる。<br>
+この場合、 **Elements**である.p-section__btn 側で位置や余白の調整の記述を追加する。<br>
+こうすることにより、**Block**の再利用性を高くする。
 
 
 ## 参考サイト
 
-### CSSガイドライン
+### CSS ガイドライン
 
 https://github.com/manabuyasuda/styleguide/blob/master/css-styleguide.md
 

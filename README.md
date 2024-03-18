@@ -2,6 +2,116 @@
 
 作成日：2024.03.13 　　更新日：2024.03.13
 
+## Sass(Dart-Sass)
+
+2022 年ごろの Sass（node-sass、LibSass）で使用されていた@import が廃止されるにあたり、Dart-Sass 用に Sass を書き換えました。
+
+### 以前の Sass（node-sass、LibSass）と違う点
+
+- @import ではなく、**@use**、**@forward** を用いてコンパイル等を行います。
+
+- 除算処理（割り算）で/（スラッシュ）を用いるとエラーになるため、**math.div**を利用する。
+
+### @use
+
+**@use**は@import と同様に呼び出し先を読み込む機能です。<br>
+@use には以下の機能があります。
+
+- ファイル名を名前空間にする
+- 任意の名前空間を設定する(as)
+- 名前空間をなくす（as \*）
+- 変数を上書きする（!default と with）
+
+主に重要な点として、名前空間の宣言
+
+#### ■ ファイル名を名前空間にする
+
+@use で読み込むファイルパスを指定するだけです。
+
+```
+@use "ディレクトリパス/ファイル名";
+```
+
+こうすることでファイル名がそのまま名前空間となります。
+
+また、名前空間は as 節によって変更可能です。
+
+```
+@use "font-size" as fs;
+@use "breakpoint" as bp;
+```
+
+#### 読み込んだファイルの変数などを使う方法
+
+@use で読み込んだファイルの中に記述されている変数や mixin などを使うには、名前空間を使って呼び出す必要があります。<br>
+変数はそのまま使えるのではなく、`ファイル名.変数名の形`での記載が必要です。
+
+```
+// as節でファイル名を「var」に変更
+@use "../../Foundation/import" as var;
+
+
+// 別ファイルで設定したmixinを呼び出す際に名前空間を使う
+.p-text{
+  font-family: var.$ff-DM;
+  font-size: var.fs(24,32);
+
+  @include var.mq(max,sp){
+    // ..
+  }
+}
+```
+
+### @forward 
+
+@forwardは呼び出し先の変数を1つのファイルにまとめて読み込める機能です。<br>
+変数を記載したファイル（_variable.scss）やmixinを記載したファイル（_mixin.scss）など、いろんなファイルでよく読み込むファイルをまとめて読み込みたいときに使用します。<br>
+@forwardは、Sassのライブラリ作成用のルールと思っていただければ問題ありません。
+
+FLOCSSにおいては、主に**Foundation**にのみ利用する形が基本になります。
+
+#### Foundation内で使用されている@forwardで読み込みしている_index.scssの一例
+
+##### Foundation/_index.scss
+```
+@forward "reset";
+
+@forward "css-variable";
+@forward "base";
+@forward "keyframes";
+```
+##### Foundation/mixin/_index.scss
+```
+@forward "animation";
+@forward "breakpoint";
+@forward "common";
+@forward "scroll";
+@forward "svg";
+@forward "easing";
+@forward "font-size";
+```
+
+### math.div の使い方
+
+除算処理（割り算）で/（スラッシュ）を用いるとエラーになるため、**math.div**を利用する。
+
+```
+// NG！ エラーになります。
+.p-test{
+   width: (100% / 4);
+}
+```
+
+```
+// sassで用意されているmathモジュールを@useで呼び出す
+@use "sass:math";
+
+.p-test{
+   width: math.div(100%, 4);
+}
+
+```
+
 ## CSS 設計
 
 大まかなベースは[FLOCSS](https://github.com/hiloki/flocss)を利用。
@@ -301,7 +411,7 @@ window.addEventListener('scroll', () => {
 
 ##### Layout には位置など、レイアウトの指定のみ定義し、子要素を作らない
 
-#####
+##### JS のクラス名をスタイルで指定しない
 
 ```
 // positionやmarginなど
@@ -334,15 +444,15 @@ window.addEventListener('scroll', () => {
 }
 ```
 
-## Sass(Dart-Sass)
-
-2022 年ごろの Sass（LibSass）で使用されていた@import が廃止されるにあたり、Dart-Sass 用に Sass を書き換えました。
-
-こちらでは@import ではなく、@use、@forward を用いてコンパイル等を行います。
-
 ## 参考サイト
 
 https://zenn.dev/wagashi_osushi/books/94efd21a66ccaa
+
+### Dart-Sass
+
+https://www.kannart.co.jp/blog/web-hacks/web-coding/7353/
+
+https://prograshi.com/design/css/use-forward/
 
 ### CSS ガイドライン
 

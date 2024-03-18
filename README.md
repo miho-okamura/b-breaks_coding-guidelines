@@ -230,7 +230,8 @@ Block は使い回しが可能なパーツとして考えるため、レイア�
 この場合、ボタンに 2 つのクラスを指定する。見た目のスタイルを Block、位置や余白のスタイルを Element に指定する。<br>
 これは BEM では**Mix**と言う。
 
-> [!TIP] > **Mix**とは Block 自体が持つべきではないレイアウトなどに関する指定を Element を利用して指定する、BEM にとって最も重要なテクニック。<br>
+> [!TIP] 
+> **Mix**とは Block 自体が持つべきではないレイアウトなどに関する指定を Element を利用して指定する、BEM にとって最も重要なテクニック。<br>
 > 特に意識してコーディングをお願いします。
 
 #### Modifier（バリエーション）
@@ -398,7 +399,7 @@ window.addEventListener('scroll', () => {
         <!--MENU-->
       </nav>
       <div class="p-header__contact">
-        <a href="" class="p-contactBtn p-contactBtn-orange"> <!--※4-->
+        <a href="" class="p-contactBtn p-contactBtn-orange"> <!--※3-->
           <!-- CONTACT -->
         </a>
       </div>
@@ -407,11 +408,11 @@ window.addEventListener('scroll', () => {
 </header>
 ```
 
-#### ※1
+### ※1
 
-##### Layout には位置など、レイアウトの指定のみ定義し、子要素を作らない
+#### ◆ Layout には位置など、レイアウトの指定のみ定義し、子要素を作らない
 
-##### JS のクラス名をスタイルで指定しない
+#### ◆ JS のクラス名をスタイルで指定しない
 
 ```
 // positionやmarginなど
@@ -425,13 +426,9 @@ window.addEventListener('scroll', () => {
 }
 ```
 
-#####
+### ※2
 
-#### ※2
-
-##### Block には「margin」「position:absolute」などのレイアウトに関わるスタイルを指定しない
-
-##### Block の中で Block を用意する
+#### ◆ Block には「margin」「position:absolute」などのレイアウトに関わるスタイルを指定せず、Elementに指定する。
 
 ```
 // 背景色などのスタイルはObject側のパーツやブロックで指定する。
@@ -442,6 +439,40 @@ window.addEventListener('scroll', () => {
     margin: auto;
   }
 }
+```
+
+#### ◆ Block の中で Block を用意する
+
+```
+.p-header{
+  &__logo{
+    margin: 8px 16px;
+    width: 240px;
+  }
+}
+
+.p-logo{
+  &__link{
+    color: red;
+    &:hover{
+      color: blue;
+    }
+  }
+}
+```
+### ※3
+
+#### ◆ Modifierでバリエーションや状態の変化をつくるときに指定する。
+
+```
+.p-contactBtn{
+  width: 320px;
+  height: 48px;
+  border-radius: 9999px;
+  &-orange{
+    background-color: orange;
+  }
+} 
 ```
 
 ## 参考サイト

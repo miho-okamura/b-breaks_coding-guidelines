@@ -2,25 +2,33 @@
 
 作成日：2024.03.13 　　更新日：2024.03.13
 
-## 開発環境
-
-### コーディング
-
-■Vite ■Sass（SCSS） ■Handlebars
-
-## HTML
-
-## Sass(Dart-Sass)
-
-2022 年ごろの Sass（LibSass）で使用されていた@import が廃止されるにあたり、Dart-Sass 用に Sass を書き換えました。
-
-こちらでは@import ではなく、@use、@forward を用いてコンパイル等を行います。
-
 ## CSS 設計
-
 大まかなベースは[FLOCSS](https://github.com/hiloki/flocss)を利用。
 
-命名は [BEM](https://en.bem.info/methodology/quick-start) を利用。
+命名はFLOCSSに沿って [BEM](https://en.bem.info/methodology/quick-start) を利用。
+
+### コーディング規約の必要性
+- 予測しやすい
+- 再利用しやすい
+- 保守しやすい
+- 拡張しやすい
+
+上記の４つの条件を満たしたコードが良いとされています。<br>
+簡単に言うと以下の通りです。
+
+#### 予測
+クラス名を見るだけでどこに使われているか、どのようなものなのか予測ができる
+
+#### 再利用
+同じようなパーツがデザインにあった時、同じものを別に用意せず書き直したり上書きせずに利用ができる
+
+#### 保守
+新しく機能を追加、更新しても既存のスタイル・ソースが破綻しにくい
+
+#### 拡張
+自分以外の作業者が利用・管理しやすいコードである。
+
+
 
 ### ◆ FLOCSS について※重要箇所のピックアップ
 
@@ -65,30 +73,6 @@ scss
 > 例外は".p-"などのファイル数が少なく、混在させても管理が容易（ディレクトリでの整理が不要）の場合のみです。
 
 
-
-#### Layoutには位置など、レイアウトの指定のみ定義し、子要素を作らない
-
-```
-// positionやmarginなど
-.l-header{
-  position: relative;
-  &.is-fixed{
-    position: fixed;
-    left: 0;
-    top: 0;
-  }
-}
-
-// 背景色などのスタイルはObject側のパーツやブロックで指定する。
-.p-header{
-  background-color: #f6f6f6;
-  &__inner{
-    max-width: 1200px;
-    margin: auto;
-  }
-}
-```
-
 ### BEM について
 
 以下を見る前に一度[BEM](https://en.bem.info/methodology/quick-start) / [BEM (日本語翻訳版)](https://github.com/juno/bem-methodology-ja/blob/master/definitions.md)に目を通してください。
@@ -96,13 +80,16 @@ scss
 #### BEM の概念
 
 BEM は **ブロック（Block）**、**エレメント（Element）**、**モディファイア（Modifier）** の頭文字をとったものです。<br>
-Block はあるパーツ（コンポーネント）の親要素です。Block は Element と呼ばれる子孫要素を持つことができます。<br>
+Block はあるパーツ（コンポーネント）の親要素です。<br>
+Block は Element と呼ばれる子孫要素を持つことができます。<br>
 Modifier はバリエーションや状態を変化させるときに指定するもので、Block か Element と同階層に指定します。
 
 - .**Block**
 - .Block\_\_**Element**
 - .Block-**Modifier**
 - .Block\_\_Element-Modifier
+
+上記の4パターンが基本です。
 
 #### ID は使わない
 
@@ -130,7 +117,8 @@ Block は使い回しが可能なパーツとして考えるため、レイア�
 この場合、ボタンに 2 つのクラスを指定する。見た目のスタイルを Block、位置や余白のスタイルを Element に指定する。<br>
 これは BEM では**Mix**と言う。
 
-> [!TIP] > **Mix**とは Block 自体が持つべきではないレイアウトなどに関する指定を Element を利用して指定する、BEM にとって最も重要なテクニック。<br>
+> [!TIP] 
+> **Mix**とは Block 自体が持つべきではないレイアウトなどに関する指定を Element を利用して指定する、BEM にとって最も重要なテクニック。<br>
 > 特に意識してコーディングをお願いします。
 
 #### Modifier（バリエーション）
@@ -141,10 +129,20 @@ Block は使い回しが可能なパーツとして考えるため、レイア�
 // 例
 
 <div class="p-box">
-  <div class="p-box__btn">
-    <a href="#" class="c-btn p-box__btn-item">button</a>
+  <div class="p-box__txt">
+
+  </div>
+  <div class="p-box__btn p-box__btn-small">
+    <a href="#" class="c-btn c-btn-red">button</a>
   </div>
 </div>
+```
+
+```
+.p-box{
+
+}
+
 ```
 
 ## ★ ハウスルール
@@ -153,7 +151,8 @@ Block は使い回しが可能なパーツとして考えるため、レイア�
 
 上記ルールの場合 class 名が長くなってしまうため、追加したルール。
 
-### Block の命名で単語と単語を繋げたい場合、ケバブケースではなくキャメルケース（ローワーキャメルケース）で表記する。
+### 単語と単語を繋げたい場合、ケバブケース・キャメルケース（ローワーキャメルケース）を混在させない
+※どちらを使っても構いませんが、混在させるのは**絶対NG**です。
 
 ```
 /* ◆ ケバブケース */
@@ -169,6 +168,7 @@ Block は使い回しが可能なパーツとして考えるため、レイア�
 
 .p-heroCatch {}
 ```
+
 
 ### アンダースコアは２つ（\_\_）、ハイフンは１つ（-）。
 
@@ -221,57 +221,84 @@ Block は使い回しが可能なパーツとして考えるため、レイア�
 
 ## FLOCSS(+BEM)のコーディング例
 
-#### 例 1 : 複数のクラス名をつけて管理する
 
 ```
-<header class=l-header" id="js-nav">
+<header class=l-header"> <!--※1-->
   <div class="p-header">
-    <h1 class="p-header__logo p-logo">
-      <a href="/" class="p-logo__link">
-        <!--LOGO-->
-      </a>
-    </h1>
-    <nav class="p-header__nav p-gNav">
-      <!--MENU-->
-    </nav>
-    <div class="p-header__contact">
-      <a href="" class="p-contactBtn p-contactBtn-orange">
-        <!-- CONTACT -->
-      </a>
+    <div class="p-header__inner">
+      <h1 class="p-header__logo p-logo"> <!--※2-->
+        <a href="/" class="p-logo__link">
+          <!--LOGO-->
+        </a>
+      </h1>
+      <nav class="p-header__nav p-gNav" id="js-nav"> <!--※3-->
+        <!--MENU-->
+      </nav>
+      <div class="p-header__contact">
+        <a href="" class="p-contactBtn p-contactBtn-orange"> <!--※4-->
+          <!-- CONTACT -->
+        </a>
+      </div>
     </div>
   </div>
 </header>
 ```
 
+#### ※1 : 複数のクラス名をつけて管理する
+
+
+
+#### 例 2 : Layoutには位置など、レイアウトの指定のみ定義し、子要素を作らない
+
+```
+// positionやmarginなど
+.l-header{
+  position: relative;
+  &.is-fixed{
+    position: fixed;
+    left: 0;
+    top: 0;
+  }
+}
+
+// 背景色などのスタイルはObject側のパーツやブロックで指定する。
+.p-header{
+  background-color: #f6f6f6;
+  &__inner{
+    max-width: 1200px;
+    margin: auto;
+  }
+}
+```
+
 
 #### 例 2 : Block には「margin」「position:absolute」などのレイアウトに関わるスタイルを指定しない
 
-```
-.p-header{
-  width: 100%;
-  height: 100%;
-  background-color: #f6f6f6;
-}
-
-.l-header{
-  position: fixed;
-  left: 0;
-  top: 0;
-}
-```
 
 上の例だと、.c-card が**Block**、.p-section__btn が**Elements**になる。<br>
 この場合、 **Elements**である.p-section__btn 側で位置や余白の調整の記述を追加する。<br>
 こうすることにより、**Block**の再利用性を高くする。
 
 
+
+## Sass(Dart-Sass)
+
+2022 年ごろの Sass（LibSass）で使用されていた@import が廃止されるにあたり、Dart-Sass 用に Sass を書き換えました。
+
+こちらでは@import ではなく、@use、@forward を用いてコンパイル等を行います。
+
+
 ## 参考サイト
+
+https://zenn.dev/wagashi_osushi/books/94efd21a66ccaa
 
 ### CSS ガイドライン
 
 https://github.com/manabuyasuda/styleguide/blob/master/css-styleguide.md
 
 https://brachio.co.jp/blog/w6s7zd13hha7
+
+https://qiita.com/super-mana-chan/items/644c6827be954c8db2c0
 
 ### FLOCSS
 

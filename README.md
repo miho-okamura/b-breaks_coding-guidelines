@@ -2,7 +2,7 @@
 
 作成日：2024.03.13 　　更新日：2024.03.13
 
-## Sass(Dart-Sass)
+## ★ Sass(Dart-Sass)
 
 2022 年ごろの Sass（node-sass、LibSass）で使用されていた@import が廃止されるにあたり、Dart-Sass 用に Sass を書き換えました。
 
@@ -41,7 +41,7 @@
 @use "breakpoint" as bp;
 ```
 
-#### 読み込んだファイルの変数などを使う方法
+#### ■ 読み込んだファイルの変数などを使う方法
 
 @use で読み込んだファイルの中に記述されている変数や mixin などを使うには、名前空間を使って呼び出す必要があります。<br>
 変数はそのまま使えるのではなく、`ファイル名.変数名の形`での記載が必要です。
@@ -69,7 +69,7 @@
 
 FLOCSS においては、主に**Foundation**にのみ利用する形が基本になります。
 
-#### Foundation 内で使用されている@forward で読み込みしている\_index.scss の一例
+#### ■ Foundation 内で使用されている@forward で読み込みしている\_index.scss の一例
 
 ##### Foundation/\_index.scss
 
@@ -112,7 +112,7 @@ FLOCSS においては、主に**Foundation**にのみ利用する形が基本�
 
 ```
 
-## CSS 設計
+## ★ CSS 設計
 
 大まかなベースは[FLOCSS](https://github.com/hiloki/flocss)を利用。
 
@@ -194,7 +194,7 @@ scss
 > また、基本的に「Object」ディレクトリ直下にファイルは作らないようにしてください。ここのディレクトリ直下にあるファイルはコンパイル用の style.scss のみにしてください。<br>
 > 例外は".p-"などのファイル数が少なく、混在させても管理が容易（ディレクトリでの整理が不要）の場合のみです。
 
-### BEM について
+### ◆ BEM について
 
 以下を見る前に一度[BEM](https://en.bem.info/methodology/quick-start) / [BEM (日本語翻訳版)](https://github.com/juno/bem-methodology-ja/blob/master/definitions.md)に目を通してください。
 
@@ -316,7 +316,7 @@ Block は使い回しが可能なパーツとして考えるため、レイア�
 
 ```
 
-### JavaScript から参照、操作されるクラス名
+### ◆ JavaScript から参照、操作されるクラス名
 
 JavaScript や jQuery を用いる際には専用のクラス名を用意することで、
 
@@ -465,7 +465,7 @@ window.addEventListener('scroll', () => {
 
 ###
 
-## FLOCSS(+BEM)のコーディング例
+## ★ FLOCSS(+BEM)のコーディング例
 
 ```
 <header class="l-header" id="js-header"> <!--※1-->
@@ -557,7 +557,7 @@ window.addEventListener('scroll', () => {
 }
 ```
 
-## 参考サイト
+## ★ 参考サイト
 
 https://zenn.dev/wagashi_osushi/books/94efd21a66ccaa
 

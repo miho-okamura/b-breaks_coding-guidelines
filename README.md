@@ -50,7 +50,6 @@
 // as節でファイル名を「var」に変更
 @use "../../Foundation/import" as var;
 
-
 // 別ファイルで設定したmixinを呼び出す際に名前空間を使う
 .p-text{
   font-family: var.$ff-DM;
@@ -62,25 +61,26 @@
 }
 ```
 
-### @forward 
+### @forward
 
-@forwardは呼び出し先の変数を1つのファイルにまとめて読み込める機能です。<br>
-変数を記載したファイル（_variable.scss）やmixinを記載したファイル（_mixin.scss）など、いろんなファイルでよく読み込むファイルをまとめて読み込みたいときに使用します。<br>
-@forwardは、Sassのライブラリ作成用のルールと思っていただければ問題ありません。
+@forward は呼び出し先の変数を 1 つのファイルにまとめて読み込める機能です。<br>
+変数を記載したファイル（\_variable.scss）や mixin を記載したファイル（\_mixin.scss）など、いろんなファイルでよく読み込むファイルをまとめて読み込みたいときに使用します。<br>
+@forward は、Sass のライブラリ作成用のルールと思っていただければ問題ありません。
 
-FLOCSSにおいては、主に**Foundation**にのみ利用する形が基本になります。
+FLOCSS においては、主に**Foundation**にのみ利用する形が基本になります。
 
-#### Foundation内で使用されている@forwardで読み込みしている_index.scssの一例
+#### Foundation 内で使用されている@forward で読み込みしている\_index.scss の一例
 
-##### Foundation/_index.scss
+##### Foundation/\_index.scss
+
 ```
-@forward "reset";
-
 @forward "css-variable";
 @forward "base";
 @forward "keyframes";
 ```
-##### Foundation/mixin/_index.scss
+
+##### Foundation/mixin/\_index.scss
+
 ```
 @forward "animation";
 @forward "breakpoint";
@@ -170,12 +170,11 @@ scss
  └─style.scss
 ```
 
-#### リセットCSSについて
+#### リセット CSS について
 
-リセットCSSはブラウザによるデフォルトのスタイルをリセットするcssを定義したものです。
+リセット CSS はブラウザによるデフォルトのスタイルをリセットする css を定義したものです。
 
-このSCSSでは[destyle.css](https://nicolas-cusan.github.io/destyle.css/)を用いてコーディングを進めています。
-
+この SCSS では[destyle.css](https://nicolas-cusan.github.io/destyle.css/)を用いてコーディングを進めています。
 
 #### FLOCSS の基本的な class の書き方※命名規則について
 
@@ -183,7 +182,7 @@ scss
 「Component」の class には **.c-**<br>
 「Project」には **.p-**<br>
 「Utility」には **.u-** <br>
-というように、対応したプレフィックス（接頭語）をclass に記述する。
+というように、対応したプレフィックス（接頭語）を class に記述する。
 
 これにより、クラス名・ファイル名だけ見ただけでもでもどのようなブロックなのか判断しやすくする。
 
@@ -229,7 +228,36 @@ ID は jQuery や javascript などの動的パーツに用いる。
 #### スタイル（css）は全て class に対して指定する（要素に対して直にスタイルを指定しない）
 
 要素を用いることによって、詳細度が上がってしまい他のスタイルを上書きしてしまう。<br>
-BEM では詳細度を均一に保つというルールがあるため、極力要素は書かないこと。
+BEM では詳細度を均一に保つというルールがあるため特別な理由がない限り要素は書かないこと。
+
+```
+// NG! 要素に直接スタイルを当てている
+img{
+  width: 100%;
+}
+
+// OK
+.c-img{
+  width: 100%;
+  &-cover{
+    height: 100%;
+    object-fit: cover;
+  }
+}
+```
+
+```
+// NG! 詳細度が上がってしまう
+div.p-body{
+  color: black;
+}
+
+// OK
+.p-body{
+  color: black;
+}
+
+```
 
 #### MIX について
 
@@ -239,8 +267,7 @@ Block は使い回しが可能なパーツとして考えるため、レイア�
 この場合、ボタンに 2 つのクラスを指定する。見た目のスタイルを Block、位置や余白のスタイルを Element に指定する。<br>
 これは BEM では**Mix**と言う。
 
-> [!TIP] 
-> **Mix**とは Block 自体が持つべきではないレイアウトなどに関する指定を Element を利用して指定する、BEM にとって最も重要なテクニック。<br>
+> [!TIP] > **Mix**とは Block 自体が持つべきではないレイアウトなどに関する指定を Element を利用して指定する、BEM にとって最も重要なテクニック。<br>
 > 特に意識してコーディングをお願いします。
 
 #### Modifier（バリエーション）
@@ -289,16 +316,16 @@ Block は使い回しが可能なパーツとして考えるため、レイア�
 
 ```
 
+### JavaScript から参照、操作されるクラス名
 
-### JavaScriptから参照、操作されるクラス名
+JavaScript や jQuery を用いる際には専用のクラス名を用意することで、
 
-JavaScriptやjQueryを用いる際には専用のクラス名を用意することで、
-
-#### JavaScriptから参照されるクラス名には「.js-***」
+#### JavaScript から参照されるクラス名には「.js-」で操作されることを明示する。
 
 例として、一定距離スクロールした段階で追従するヘッダーを実装する場合は以下のようになります。
 
-##### プレフィックスに「js-」を付けてJavaScriptで操作されることを明示する。
+##### プレフィックスに「js-」を付けて JavaScript で操作されることを明示する。
+
 ```
 <header class="l-header js-header">
   <!-- header -->
@@ -306,7 +333,21 @@ JavaScriptやjQueryを用いる際には専用のクラス名を用意するこ�
 ```
 
 ```
+// NG!  .js-のクラス名にはスタイルはあてない
+.js-header{
+  //...
+}
+
+.l-header{
+  &.js-header{
+    //...
+  }
+}
+```
+
+```
 // .js-headerを参照に処理を与える
+
 const header = document.querySelector('.js-header');
 window.addEventListener('scroll', () => {
   if (window.pageYOffset > 100) {
@@ -317,10 +358,18 @@ window.addEventListener('scroll', () => {
 });
 ```
 
-#### JavaScriptから操作されるクラス名には「.is-***」
-
+#### JavaScript から操作されるクラス名には「.is-」で定義する
 
 ```
+// NG!
+//.is-*** 単体のみに直接スタイルをあてないこと！
+.is-fixed{
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+// OK
 .l-header{
   position: relative;
   &.is-fixed{
@@ -330,12 +379,15 @@ window.addEventListener('scroll', () => {
   }
 }
 
-// NG!
-.is-***{
-  /*.is-*** 単体に直接スタイルは指定しないこと！*/
+// 同じクラス名(.is-fixed)を使っても別々のスタイルを当てることができる。
+.l-scrollTop{
+  &.is-fixed{
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
 }
 ```
-
 
 ## ★ ハウスルール
 
@@ -411,6 +463,7 @@ window.addEventListener('scroll', () => {
 </nav>
 ```
 
+###
 
 ## FLOCSS(+BEM)のコーディング例
 
@@ -456,7 +509,7 @@ window.addEventListener('scroll', () => {
 
 ### ※2
 
-#### ◆ Block には「margin」「position:absolute」などのレイアウトに関わるスタイルを指定せず、Elementに指定する。
+#### ◆ Block には「margin」「position:absolute」などのレイアウトに関わるスタイルを指定せず、Element に指定する。
 
 ```
 // 背景色などのスタイルはObject側のパーツやブロックで指定する。
@@ -488,9 +541,10 @@ window.addEventListener('scroll', () => {
   }
 }
 ```
+
 ### ※3
 
-#### ◆ Modifierでバリエーションや状態の変化をつくるときに指定する。
+#### ◆ Modifier でバリエーションや状態の変化をつくるときに指定する。
 
 ```
 .p-contactBtn{
@@ -500,7 +554,7 @@ window.addEventListener('scroll', () => {
   &-orange{
     background-color: orange;
   }
-} 
+}
 ```
 
 ## 参考サイト

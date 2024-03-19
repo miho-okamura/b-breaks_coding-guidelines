@@ -170,13 +170,22 @@ scss
  └─style.scss
 ```
 
+#### リセットCSSについて
+
+リセットCSSはブラウザによるデフォルトのスタイルをリセットするcssを定義したものです。
+
+このSCSSでは[destyle.css](https://nicolas-cusan.github.io/destyle.css/)を用いてコーディングを進めています。
+
+
 #### FLOCSS の基本的な class の書き方※命名規則について
 
 「Layout」の class には **.l-**<br>
 「Component」の class には **.c-**<br>
 「Project」には **.p-**<br>
 「Utility」には **.u-** <br>
-というように、フォルダの頭文字を class に記述する。
+というように、対応したプレフィックス（接頭語）をclass に記述する。
+
+これにより、クラス名・ファイル名だけ見ただけでもでもどのようなブロックなのか判断しやすくする。
 
 > [!WARNING]
 > 「Object」レイヤーは Component、Project、Utility の親レイヤーのため、 ".o-"から始まるクラスは FLOCSS のルール違反になります。<br>
@@ -280,6 +289,54 @@ Block は使い回しが可能なパーツとして考えるため、レイア�
 
 ```
 
+
+### JavaScriptから参照、操作されるクラス名
+
+JavaScriptやjQueryを用いる際には専用のクラス名を用意することで、
+
+#### JavaScriptから参照されるクラス名には「.js-***」
+
+例として、一定距離スクロールした段階で追従するヘッダーを実装する場合は以下のようになります。
+
+##### プレフィックスに「js-」を付けてJavaScriptで操作されることを明示する。
+```
+<header class="l-header js-header">
+  <!-- header -->
+</header>
+```
+
+```
+// .js-headerを参照に処理を与える
+const header = document.querySelector('.js-header');
+window.addEventListener('scroll', () => {
+  if (window.pageYOffset > 100) {
+    header.classList.add('is-fixed');
+  } else {
+    header.classList.remove('is-fixed');
+  }
+});
+```
+
+#### JavaScriptから操作されるクラス名には「.is-***」
+
+
+```
+.l-header{
+  position: relative;
+  &.is-fixed{
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+}
+
+// NG!
+.is-***{
+  /*.is-*** 単体に直接スタイルは指定しないこと！*/
+}
+```
+
+
 ## ★ ハウスルール
 
 ここでは上記の FLOCSS、BEM にはないルールを記述している。
@@ -354,35 +411,6 @@ Block は使い回しが可能なパーツとして考えるため、レイア�
 </nav>
 ```
 
-### JS のクラス名は「is-」「js-」を使用
-
-```
-<header class="l-header js-header">
-  <!-- header -->
-</header>
-```
-
-```
-.l-header{
-  position: relative;
-  &.is-fixed{
-    position: fixed;
-    top: 0;
-    left: 0;
-  }
-}
-```
-
-```
-const header = document.querySelector('.js-header');
-window.addEventListener('scroll', () => {
-  if (window.pageYOffset > 100) {
-    header.classList.add('is-fixed');
-  } else {
-    header.classList.remove('is-fixed');
-  }
-});
-```
 
 ## FLOCSS(+BEM)のコーディング例
 
